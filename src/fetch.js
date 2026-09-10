@@ -71,7 +71,15 @@ async function fetchStations(options = {}, hooks = {}) {
   });
   reportProgress(60, { stage: 'price_rows_received', rowCount: rows.length });
 
-  const stations = normalizeAndorraStations(rows, logger);
+  let stations;
+  try {
+    stations = normalizeAndorraStations(rows, logger);
+  } catch (err) {
+    logger.warn('Andorra normalization failed entirely; returning empty batch', {
+      error: err.message,
+    });
+    stations = [];
+  }
 
   reportProgress(100, { stage: 'completed', stationCount: stations.length });
   return stations;
