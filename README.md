@@ -1,4 +1,19 @@
-# @gasolinaradar/andorra-collector
+<div align="center">
+
+<h1>@gasolinaradar/andorra-collector</h1>
+
+<p><strong>A Node.js collector for the official Govern d'Andorra fuel price service (IPE) — normalized fuel stations with prices and coordinates.</strong><br>
+<strong>Un collector de Node.js para el servicio oficial de precios de carburantes del Govern d'Andorra (IPE) — estaciones normalizadas con precios y coordenadas.</strong></p>
+
+<p>
+  <a href="https://www.npmjs.com/package/@gasolinaradar/andorra-collector"><img src="https://img.shields.io/npm/v/@gasolinaradar/andorra-collector.svg?logo=npm" alt="npm version"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/@gasolinaradar/andorra-collector.svg" alt="license: MIT"></a>
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/node/v/@gasolinaradar/andorra-collector.svg" alt="node >= 18"></a>
+  <a href="https://github.com/gasolinaradar/andorra-collector"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome"></a>
+  <a href="https://sig.govern.ad/IPE/PreusCarburants"><img src="https://img.shields.io/badge/Andorra-%F0%9F%87%A6%F0%9F%87%A9-red.svg" alt="Andorra"></a>
+</p>
+
+</div>
 
 <!-- EN -->
 
@@ -100,9 +115,24 @@ const stations = await andorraCollector.fetch({
 });
 ```
 
+### Progress reporting / Reporte de progreso
+
+The collector accepts an optional `context.reportProgress(percent, metadata)` callback:
+
+```js
+const stations = await andorraCollector.fetch({
+  reportProgress(percent, metadata) {
+    // percent: 5   -> requesting the price rows
+    // percent: 60  -> price rows received, normalizing
+    // percent: 100 -> completed
+    console.log(percent, metadata.stage);
+  },
+});
+```
+
 ---
 
-## Options / Opciones
+## Configuration / Configuración
 
 | Option       | Type                     | Default | Description                                                              |
 | ------------ | ------------------------ | ------- | ------------------------------------------------------------------------ |
@@ -122,7 +152,7 @@ const stations = await andorraCollector.fetch({
 
 ---
 
-## Output schema / Esquema de salida
+## Station contract / Contrato de estación
 
 Each normalized station looks like this / Cada estación normalizada tiene esta forma:
 
@@ -159,20 +189,28 @@ Notes / Notas:
 
 ---
 
-## Progress reporting / Reporte de progreso
+## Testing
 
-The collector accepts an optional `context.reportProgress(percent, metadata)` callback:
+```bash
+npm test           # unit tests (mocked HTTP) -> node --test test/collector.test.js
+npm run test:live  # live tests against the real ArcGIS feature service (network required) -> node --test test/live.test.js
+```
+
+`npm run test:live` requires network access and hits the real Govern d'Andorra ArcGIS feature service. The `prepublishOnly` script runs `npm test` before any publish.
+
+---
+
+## Ecosystem
+
+This package implements the common **collector contract** shared by ingestion pipelines:
 
 ```js
-const stations = await andorraCollector.fetch({
-  reportProgress(percent, metadata) {
-    // percent: 5   -> requesting the price rows
-    // percent: 60  -> price rows received, normalizing
-    // percent: 100 -> completed
-    console.log(percent, metadata.stage);
-  },
-});
+{ name: 'andorra', country: 'AD', fetch(context) }
 ```
+
+- **Repository / homepage:** [github.com/gasolinaradar/andorra-collector](https://github.com/gasolinaradar/andorra-collector)
+- **Issues:** [github.com/gasolinaradar/andorra-collector/issues](https://github.com/gasolinaradar/andorra-collector/issues)
+- **Official data source:** Govern d'Andorra fuel price service (IPE) — [sig.govern.ad/IPE/PreusCarburants](https://sig.govern.ad/IPE/PreusCarburants)
 
 ---
 
@@ -191,33 +229,16 @@ Este proyecto **no está afiliado** al Govern d'Andorra. Los datos pertenecen al
 
 ---
 
-## Legal / Legal
+## License / Licencia
 
-**EN:**
+**EN:** MIT. See [LICENSE](./LICENSE). The Govern d'Andorra data is **not** covered by this license.
 
 - [LEGAL.md](./LEGAL.md) — Legal notice and disclaimer (bilingual).
 - [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) — Data attribution and third-party licenses.
 - [LICENSE](./LICENSE) — MIT License (applies to this software, **not** to the underlying Govern d'Andorra data).
 
-**ES:**
+**ES:** MIT. Consulta [LICENSE](./LICENSE). Los datos del Govern d'Andorra **no** están cubiertos por esta licencia.
 
 - [LEGAL.md](./LEGAL.md) — Aviso legal y descargo de responsabilidad (bilingüe).
 - [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) — Atribución de datos y licencias de terceros.
 - [LICENSE](./LICENSE) — Licencia MIT (aplica a este software, **no** a los datos subyacentes del Govern d'Andorra).
-
----
-
-## Tests
-
-```bash
-npm test           # unit tests (mocked HTTP)
-npm run test:live  # live tests hitting the real ArcGIS feature service (network required)
-```
-
----
-
-## License / Licencia
-
-**EN:** MIT. See [LICENSE](./LICENSE). The Govern d'Andorra data is **not** covered by this license.
-
-**ES:** MIT. Consulta [LICENSE](./LICENSE). Los datos del Govern d'Andorra **no** están cubiertos por esta licencia.
